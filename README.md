@@ -41,41 +41,6 @@ Para colocar o projeto no ar, siga estes passos:
 
 ---
 
-## 📋 Dependências Essenciais
-
-Este projeto utiliza as seguintes bibliotecas:
-
-* **Flask**: Framework web.
-* **google-genai**: Para integração com a API Gemini.
-* **python-docx**: Para manipulação de arquivos DOCX.
-* **pdfplumber**: Para extração de texto de PDFs.
-* **reportlab**: Para geração de PDFs.
-* **requests**: Para requisições HTTP (JSearch API).
-* **python-dotenv**: Para carregar variáveis de ambiente.
-
----
-
-## ⚙️ Estrutura Modular
-
-O projeto é organizado de forma modular para facilitar a manutenção e escalabilidade:
-
-* **`app.py`**: Aplicação principal Flask.
-* **`config.py`**: Centraliza todas as configurações.
-* **`uploads/`**: Diretório para arquivos enviados.
-* **`templates/`**: Contém o HTML principal (`index.html`).
-* **`static/`**: Arquivos CSS (`style.css`) e JavaScript (`app.js`).
-* **`utils/`**: Utilitários como `text_extractor.py` (extração de texto).
-* **`services/`**: Camada de serviços:
-    * `ai_service.py`: Integração com **Google Gemini**.
-    * `job_service.py`: Busca de vagas via **JSearch API**.
-    * `pdf_service.py`: Geração de **PDFs**.
-* **`routes/`**: Define as rotas da aplicação:
-    * `upload_routes.py`: Rotas de upload.
-    * `job_routes.py`: Rotas de busca de vagas.
-    * `resume_routes.py`: Rotas de currículos.
-
----
-
 ## 🔄 Fluxo da Aplicação
 
 1.  O usuário faz o **upload** do currículo.
