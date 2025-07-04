@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otimizador de Currículos com IA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Otimizador de Currículos com IA</h1>
+            <p>Faça upload do seu currículo e encontre as melhores vagas de tecnologia</p>
+        </div>
+
+        <div class="main-card">
+            <div class="upload-section">
+                <h2>📄 Upload do Currículo</h2>
+                <p>Selecione seu currículo em PDF ou DOCX para análise</p>
+                
+                <div class="file-input-container">
+                    <input type="file" id="fileInput" class="file-input" accept=".pdf,.docx">
+                    <label for="fileInput" id="fileLabel" class="file-input-label">
+                        Clique para selecionar um arquivo (PDF ou DOCX)
+                    </label>
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="employmentType">Tipo de Emprego:</label>
+                        <select id="employmentType">
+                            <option value="">Todos os tipos</option>
+                            <option value="FULLTIME">Tempo integral</option>
+                            <option value="PARTTIME">Meio período</option>
+                            <option value="CONTRACTOR">Contratado</option>
+                            <option value="INTERN">Estagiário</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="workplaceType">Local de Trabalho:</label>
+                        <select id="workplaceType">
+                            <option value="">Todos os locais</option>
+                            <option value="REMOTE">Remoto</option>
+                            <option value="ONSITE">Presencial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="uploadBtn" class="upload-btn" disabled>
+                    🔍 Analisar Currículo e Buscar Vagas
+                </button>
+            </div>
+
+            <div id="results" class="results-section">
+                <!-- Resultados serão exibidos aqui -->
+            </div>
+
+            <div id="jobsContainer" class="jobs-container">
+                <!-- Vagas serão exibidas aqui -->
+            </div>
+
+            <div id="pagination" class="pagination">
+                <!-- Paginação será exibida aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html> 

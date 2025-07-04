@@ -1,0 +1,7 @@
+Flask
+python-docx
+pdfplumber
+requests
+python-dotenv
+reportlab
+google-generativeai 
