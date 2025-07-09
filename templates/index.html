@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobMatch AI - Otimizador de Currículo Inteligente</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        
+        .gradient-bg-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .loading-text {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 0.75rem;
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #6366f1;
+        }
+
+        .modal-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .modal-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #e5e7eb;
+        }
+
+        .modal-divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .modal-link {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-link:hover {
+            color: #7c3aed;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .modal-container {
+                padding: 1.5rem;
+                width: 95%;
+            }
+        }
+
+        /* User Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 50;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #374151;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .dropdown-item.logout {
+            color: #dc2626;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: #fef2f2;
+        }
+
+        .user-info {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.875rem;
+        }
+
+        .user-email {
+            color: #6b7280;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Upload Button States */
+        .upload-btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .upload-btn-enabled {
+            opacity: 1;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .login-message {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <!-- Logo e Nome do Site -->
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-robot text-3xl"></i>
+                    <h1 class="text-2xl font-bold">JobMatch AI</h1>
+                </div>
+                
+                <!-- Área do Usuário -->
+                <div class="flex items-center space-x-4">
+                    <button id="loginBtn" onclick="openLoginModal()" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium hover:bg-indigo-50 transition-colors duration-200">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </button>
+                    
+                    <!-- Menu Mobile -->
+                    <button class="md:hidden text-2xl hover:text-indigo-200 transition-colors duration-200">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="text-white py-16 relative min-h-[calc(100vh-100px)]" style="background: url('/static/background.png') center center / cover no-repeat;">
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">Encontre a vaga perfeita</h2>
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">com Inteligência Artificial!</h2>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
+                Envie seu currículo e nossa inteligência artificial irá analisá-lo, encontrar as melhores vagas e criar currículos personalizados <br> para cada oportunidade.
+            </p>
+            
+            <div class="pb-16">
+                <button onclick="scrollToUpload()" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <i class="fas fa-rocket mr-2"></i>Começar Agora
+                </button>
+            </div>
+        </div>
+        
+        <div class="container mx-auto px-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover text-center">
+                    <div class="text-indigo-500 text-4xl mb-4">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">1. Envie seu currículo</h4>
+                    <p class="text-gray-600">Faça upload do seu currículo atual em formato PDF ou DOCX. Nossa IA irá analisar todo o conteúdo automaticamente.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover text-center">
+                    <div class="text-indigo-500 text-4xl mb-4">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">2. Busca de vagas inteligente</h4>
+                    <p class="text-gray-600">Nossa IA pesquisa em múltiplas plataformas de emprego para encontrar as vagas mais relevantes para seu perfil.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover text-center">
+                    <div class="text-indigo-500 text-4xl mb-4">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">3. Currículos personalizados</h4>
+                    <p class="text-gray-600">Receba versões otimizadas do seu currículo para cada vaga, destacando as habilidades mais relevantes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section id="uploadSection" class="container mx-auto px-4 py-12 max-w-6xl">
+        <!-- Upload Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8 card-hover">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">📄 Upload do Currículo</h3>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Selecione seu currículo em PDF ou DOCX para análise. Nossa IA irá extrair informações como habilidades, experiências e objetivos profissionais.
+                </p>
+            </div>
+            
+            <!-- File Upload Area -->
+            <div class="file-upload mb-8">
+                <label class="cursor-pointer">
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-indigo-500 transition-colors duration-200">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-indigo-500 mb-4"></i>
+                        <h4 class="text-lg font-medium text-gray-700 mb-2">Arraste e solte seu arquivo aqui</h4>
+                        <p class="text-gray-500 mb-4">ou clique para selecionar</p>
+                        <p class="text-sm text-gray-400">Formatos suportados: PDF, DOCX (Tamanho máximo: 5MB)</p>
+                    </div>
+                    <input type="file" id="fileInput" accept=".pdf,.docx" class="hidden">
+                </label>
+            </div>
+            
+            <!-- Filters -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-2">
+                    <label for="employmentType" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-briefcase mr-2 text-indigo-500"></i>Tipo de Emprego
+                    </label>
+                    <select id="employmentType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200">
+                        <option value="">Todos os tipos</option>
+                        <option value="FULLTIME">Tempo integral</option>
+                        <option value="PARTTIME">Meio período</option>
+                        <option value="CONTRACT">Contrato</option>
+                        <option value="INTERNSHIP">Estágio</option>
+                    </select>
+                </div>
+                
+                <div class="space-y-2">
+                    <label for="workplaceType" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-building mr-2 text-indigo-500"></i>Tipo de Trabalho
+                    </label>
+                    <select id="workplaceType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200">
+                        <option value="">Todos os tipos</option>
+                        <option value="REMOTE">Remoto</option>
+                        <option value="ON_SITE">Presencial</option>
+                        <option value="HYBRID">Híbrido</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Upload Progress -->
+            <div id="uploadProgress" class="hidden mb-8">
+                <div class="bg-gray-100 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Processando...</span>
+                        <span id="progressPercent" class="text-sm font-medium text-indigo-600">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progressBar" class="progress-bar bg-indigo-600 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upload Success -->
+            <div id="uploadSuccess" class="hidden mb-8">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                        <div>
+                            <h4 class="text-green-800 font-medium">Upload concluído!</h4>
+                            <p class="text-green-600 text-sm">Estamos analisando seu currículo. Isso pode levar alguns minutos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upload Button -->
+            <div class="text-center">
+                <button id="uploadBtn" onclick="handleUpload()" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-full hover:bg-indigo-700 transition-all duration-300 pulse-animation">
+                    <i class="fas fa-upload mr-2"></i> Analisar Currículo e Buscar Vagas
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="results-section hidden">
+            <!-- Results will be displayed here -->
+        </div>
+
+        <!-- Jobs Container -->
+        <div id="jobsContainer" class="jobs-container hidden">
+            <!-- Jobs will be displayed here -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="pagination hidden">
+            <!-- Pagination will be displayed here -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h4 class="text-white text-lg font-bold mb-4">JobMatch AI</h4>
+                    <p class="mb-4">A plataforma inteligente que conecta seu currículo às melhores oportunidades de emprego.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-bold mb-4">Links Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Início</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Como funciona</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Vagas</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Preços</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-bold mb-4">Recursos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Dicas de currículo</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Perguntas frequentes</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Política de privacidade</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-bold mb-4">Contato</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center"><i class="fas fa-envelope mr-2"></i> contato@jobmatchai.com</li>
+                        <li class="flex items-center"><i class="fas fa-phone mr-2"></i> (11) 98765-4321</li>
+                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2"></i> São Paulo, Brasil</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center">
+                <p>&copy; 2024 JobMatch AI. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== MODAL DE LOGIN ===== -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeLoginModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 class="modal-title">Entrar na sua conta</h2>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail" class="form-label">E-mail</label>
+                    <input type="email" id="loginEmail" class="form-input" placeholder="Seu e-mail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">Senha</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Sua senha" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                </button>
+            </form>
+            
+            <div class="modal-divider">
+                <span>ou</span>
+            </div>
+            
+            <button class="btn-secondary" onclick="handleGoogleLogin()">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Entrar com Google
+            </button>
+            
+            <div class="modal-footer">
+                <span>Não tem uma conta?</span>
+                <a class="modal-link" onclick="switchToRegister()">Registre-se</a>
+            </div>
+        </div>
+    </div>
+    <!-- ===== FIM DO MODAL DE LOGIN ===== -->
+
+    <!-- ===== MODAL DE CADASTRO ===== -->
+    <div id="registerModal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeRegisterModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2 class="modal-title">Criar nova conta</h2>
+            
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName" class="form-label">Nome completo</label>
+                    <input type="text" id="registerName" class="form-input" placeholder="Seu nome completo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail" class="form-label">E-mail</label>
+                    <input type="email" id="registerEmail" class="form-input" placeholder="Seu e-mail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword" class="form-label">Senha</label>
+                    <input type="password" id="registerPassword" class="form-input" placeholder="Crie uma senha" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPasswordConfirm" class="form-label">Confirme a senha</label>
+                    <input type="password" id="registerPasswordConfirm" class="form-input" placeholder="Repita a senha" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus mr-2"></i>Criar conta
+                </button>
+            </form>
+            
+            <div class="modal-footer">
+                <span>Já tem uma conta?</span>
+                <a class="modal-link" onclick="switchToLogin()">Entrar</a>
+            </div>
+        </div>
+    </div>
+    <!-- ===== FIM DO MODAL DE CADASTRO ===== -->
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Auth Script -->
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    
+        <!-- App Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html> 
